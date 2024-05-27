@@ -1,0 +1,84 @@
+table, th, td {
+    border: solid #e39967 1px;
+    border-collapse: collapse;
+    background-color: rgb(40, 40, 40);
+}
+td {
+    box-sizing: border-box;
+}
+body {
+    background-color: rgb(40, 40, 40);
+    color: #fff3ea;
+}
+#topDiv {
+    display: flex;
+    width: 80vw;
+    height: 150px;
+    justify-content: flex-start;
+    margin-bottom: 50px;
+}
+#heading {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+}
+#canvasWindow {
+    position: absolute;
+    top: 190px;
+    left: 5px;
+    visibility: hidden;
+}
+#svgWindow {
+    position: absolute;
+    top: 190px;
+    left: 675px;
+    visibility: visible;
+    width: 650px;
+}
+.btnCloseDiv {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    top: 25px;
+}
+#imageSrc {
+    width: 650px;
+
+}
+#imageContainer {
+    display: flex;
+    justify-content: space-around;
+}
+.inputoutput {
+    width: 90vw;
+}
+#svgOutput {
+    background-color: white;
+    color: black;
+    width: 650px;
+}
+#status {
+    font-size: 120%;
+}
+.controls {
+    display: flex;
+    flex-direction: column;
+    margin-left: 150px;
+}
+input[type="range"] {
+  width: 400px; /* Adjust this value to set the desired width */
+}
+#btnUpdate {
+    width: 10vw;
+}
+
+.crt-font {
+    /*
+    Kule retro-fonts og effekter her: https://retrocomputing.stackexchange.com/questions/12835/exactly-what-color-was-the-text-on-monochrome-terminals-with-green-on-black-and
+    Fonten finnes her: https://caglrc.cc/~svo/glasstty/
+    */
+    font-family: "Glass TTY VT220";
+    font-size: 30px;
+    color: #f0fff8; /* almost white */
+    text-shadow: 0 0 3px #e39967, 0 0 10px #e39967, 0 0 20px #e39967, 0 0 30px #e39967;
+}

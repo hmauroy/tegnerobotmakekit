@@ -1,0 +1,32 @@
+{
+    "name": "Tegnerobot",
+    "description": "",
+    "dependencies": {
+        "core": "*",
+        "radio": "*",
+        "microphone": "*",
+        "microbit-pxt-i2cpins": "github:bsiever/microbit-pxt-i2cpins#v0.0.7",
+        "servo": "*"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md",
+        "custom.ts",
+        "image_to_svg.html",
+        "image2svg.css",
+        "potrace.js",
+        "potrace_bg8.js"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "target": "6.0.28",
+        "targetId": "microbit"
+    },
+    "supportedTargets": [
+        "microbit"
+    ],
+    "preferredEditor": "blocksprj"
+}
