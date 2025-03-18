@@ -1,5 +1,5 @@
 {
-    "name": "Tegnerobot",
+    "name": "TegnerobotMakeKit",
     "description": "",
     "dependencies": {
         "core": "*",
@@ -22,7 +22,7 @@
         "test.ts"
     ],
     "targetVersions": {
-        "target": "6.0.28",
+        "target": "7.0.57",
         "targetId": "microbit"
     },
     "supportedTargets": [

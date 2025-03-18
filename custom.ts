@@ -35,9 +35,10 @@ namespace tegneRobot {
     };
 
 
+    export const stepsPerMM = Math.ceil(200 / 60.0);
 
     export const draw = {
-        pulseInterval: 400,
+        pulseInterval: 5000,
         penDown: false,
         isDrawing: true,
         targetPoint: { x: 0, y: 0 },
@@ -87,7 +88,6 @@ namespace tegneRobot {
     //% xPosition.min=0 yPosition.min=0
     //% xPosition.fieldOptions.precision=1 yPosition.fieldOptions.precision=1 
     export function moveHeadToMM(xPosition: number, yPosition: number) {
-        const stepsPerMM = Math.ceil(5000 / 62.0);
         let x = xPosition * stepsPerMM;
         let y = yPosition * stepsPerMM;
         moveHeadTo(x,y);
@@ -359,6 +359,7 @@ namespace tegneRobot {
         showStatusIcon();
     }
 
+
     //% block="Show OK icon" icon="\uf204" blockGap=8
     export function showOkIcon() {
         basic.showIcon(IconNames.Yes, 500);
@@ -472,7 +473,6 @@ namespace tegneRobot {
     //% block="Square|upper left Xpos %xPosition|upper left Ypos %yPosition| length of side %lengthOfSide| rotation %rotation |penLifted %lift" blockGap=8
     //% xPosition.min=0 yPosition.min=0 lengthOfSide.defl=10 lift.defl=true
     export function square(xPosition: number, yPosition: number, lengthOfSide: number, rotation: number = 0, lift = true): void {
-        const stepsPerMM = Math.ceil(5000 / 62.0);
         const origin = { x: xPosition * stepsPerMM, y: yPosition * stepsPerMM };
         const size = lengthOfSide * stepsPerMM;
         moveHeadTo(origin.x, origin.y);
@@ -498,7 +498,6 @@ namespace tegneRobot {
     //% block="Rectangle|upper left Xpos %xPosition|upper left Ypos %yPosition| length %length| height %height| rotation %rotation |penLifted %lift" blockGap=8
     //% xPosition.min=0 yPosition.min=0 length.defl=20 height.defl=10 lift.defl=true
     export function rectangle(xPosition: number, yPosition: number, length: number, height: number, rotation: number = 0, lift = true): void {
-        const stepsPerMM = Math.ceil(5000 / 62.0);
         const origin = { x: xPosition * stepsPerMM, y: yPosition * stepsPerMM };
         const l = length * stepsPerMM;
         const h = height * stepsPerMM;
@@ -528,7 +527,6 @@ namespace tegneRobot {
     //% x.min=0 x.max=120 y.min=0 y.max=100 r.min=3 r.max=50
     //% x.fieldOptions.precision=1 y.fieldOptions.precision=1 r.defl=3 lift.defl=true
     export function circle(centerX: number, centerY: number, r: number, lift = true): void {
-        const stepsPerMM = Math.ceil(5000 / 62.0);
         const origin = { x: centerX * stepsPerMM, y: centerY * stepsPerMM };
         const segment_length = 2;
         const n_segments = (2 * Math.PI * r) / segment_length;
@@ -571,7 +569,6 @@ namespace tegneRobot {
     //% x1.min=0, x2.min=0, x3.min=0, y1.min=0 y2.min=0 y3.min=0 lift.defl=true
     export function triangle(x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, rotation: number = 0, lift = true): void {
         showStatusIcon();
-        const stepsPerMM = Math.ceil(5000 / 62.0);
         const positions = { 
             x1: x1 * stepsPerMM, 
             y1: y1 * stepsPerMM,
@@ -617,7 +614,6 @@ namespace tegneRobot {
             });
         });
         */
-        const stepsPerMM = 5000 / 62.0;
         // Run through array
         let lastCoordinates: SvgElement[] = [];
         let coordinates: SvgElement[] = [];
@@ -744,7 +740,6 @@ namespace tegneRobot {
     */
     //% block="SVG|SVG string %svgString |penLifted %lift" blockGap=8
     export function svg(svgString: string, lift = true): void {
-        const stepsPerMM = 5000 / 62.0;
         let svgArr: (any | (string | number))[][] = JSON.parse(svgString);
         // Run through array
         let lastCoordinates: number[] = [];
@@ -863,7 +858,6 @@ namespace tegneRobot {
     //% block="SVG (SD-card) |penLifted %lift" blockGap=8
     //% lift.defl=true
     export function svgSdCard(lift = true): void {
-        const stepsPerMM = 5000 / 62.0;
         let lastCoordinates: number[] = [];
         let coordinates: number[] = [];
         let n_segments = 1;
