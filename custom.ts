@@ -35,10 +35,10 @@ namespace tegneRobot {
     };
 
 
-    export const stepsPerMM = Math.ceil(200 / 60.0);
+    export const stepsPerMM = Math.ceil(800 / 60.0);
 
     export const draw = {
-        pulseInterval: 5000,
+        pulseInterval: 2000,
         penDown: false,
         isDrawing: true,
         targetPoint: { x: 0, y: 0 },
@@ -914,13 +914,20 @@ namespace tegneRobot {
                 y3 = parseFloat(parts[6]) * stepsPerMM;
 
                 serialLog("C " + x3 + "," + y3);
-                // Simple move to end point
+                // Simple move to end point.
+                // TODO: Implement real calculation of bezier curves!
                 moveHeadTo(x3, y3);
 
             }
             else if (type === "L") {
-                // Handle 'L' type data
+                // Handle 'L' type data: ..."L",52.3,86.6,51.3,86.6,...
+                x0 = parseFloat(parts[1]) * stepsPerMM;
+                y0 = parseFloat(parts[2]) * stepsPerMM;
+                x1 = parseFloat(parts[3]) * stepsPerMM;
+                y1 = parseFloat(parts[4]) * stepsPerMM;
                 serialLog("L");
+                // Simple move to end point because start point is close to last end point of the former curve segment.
+                moveHeadTo(x1, y1);
             }
             else {
                 // Handle unexpected type
