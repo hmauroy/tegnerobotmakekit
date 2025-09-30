@@ -240,6 +240,18 @@ namespace tegneRobot {
 
     }
 
+    /**
+     * Turns off the stepper drivers to turn of humming and squeeking, and also rattle etc. from NEMA17 stepper motors.
+     * Pulls the EN-pins high. They are active-LOW.
+     */
+    //% help=disableSteppers/draw weight=77
+    //% block="Disable stepper motors"  icon="\uf204" blockGap=8
+    export function disableSteppers() {
+        // TODO: Set the two ENABLE pins HIGH.
+        
+
+    }
+
 
     export function serialLog(text: string) {
         serial.writeLine(text);
@@ -313,7 +325,9 @@ namespace tegneRobot {
         pins.digitalWritePin(DigitalPin.P11, 1);
         // Initialize PCA9557
         i2crr.setI2CPins(DigitalPin.P1, DigitalPin.P2)
-        ledOff();    // sends number 32 to i2c slave to turn off servo
+        ledOff();
+        // Turns off stepper drivers
+        disableSteppers();  // Not implement yet.
         basic.showLeds(`
         . . # . .
         . . . # .
@@ -329,7 +343,7 @@ namespace tegneRobot {
                     // Turn OFF B-button setting it HIGH
                     pins.digitalWritePin(DigitalPin.P11, 1);
                     isWaiting = false;
-                    // TODO: Enable pin turns on for stepper-drivers.
+                    // TODO: Enable steppers by pulling ENABLE pins LOW.
 
                     
                     control.raiseEvent(startEvent, startEventValue);
@@ -375,7 +389,9 @@ namespace tegneRobot {
     //% block="Show status icon" icon="\uf204" blockGap=8
     export function showStatusIcon() {
         basic.clearScreen();
-        // Show only a status led
+        // Show only a status led.
+        // TODO: Check progress by checking a counter of expected bits of data that has been drawn.
+        // SD-card drawing can have a header where data length is included.
         led.plot(0, 4);
     }
 
@@ -884,7 +900,8 @@ namespace tegneRobot {
                     }
                     serialLog("Finished SVG drawing from SD-card");
                     serialLog("current pos: " + machine.currentPosition.x + "," + machine.currentPosition.y);
-
+                    showOkIcon();
+                    // TODO: 
                     basic.pause(500);
                 }
                 continue;
