@@ -897,6 +897,8 @@ namespace tegneRobot {
                 // Handle 'M' type data
                 let x = parseFloat(parts[1]);
                 let y = parseFloat(parts[2]);
+                lastCoordinates = [x, y];
+                coordinates = [];
 
                 serialLog("M " + x + "," + y);
 
@@ -907,21 +909,51 @@ namespace tegneRobot {
                 lowerPen();
 
 
-            } 
+            }
             else if (type === "C") {
-                // Handle 'C' type data
-                x0 = parseFloat(parts[1]) * stepsPerMM;
-                y0 = parseFloat(parts[2]) * stepsPerMM;
-                x2 = parseFloat(parts[3]) * stepsPerMM;
-                y2 = parseFloat(parts[4]) * stepsPerMM;
-                x3 = parseFloat(parts[5]) * stepsPerMM;
-                y3 = parseFloat(parts[6]) * stepsPerMM;
+                // Cubic bezier
+                let drawCoords: (number | number)[][] = [];
+                coordinates = []; // Initialize empty array to store lastCoordinates.
+                coordinates = coordinates.concat(lastCoordinates);
 
-                serialLog("C " + x3 + "," + y3);
-                // Simple move to end point.
-                // TODO: Implement real calculation of bezier curves!
-                moveHeadTo(x3, y3);
+                x0 = parseFloat(parts[1]);
+                y0 = parseFloat(parts[2]);
+                x2 = parseFloat(parts[3]);
+                y2 = parseFloat(parts[4]);
+                x3 = parseFloat(parts[5]);
+                y3 = parseFloat(parts[6]);
 
+                // Update last coordinates for the next bezier curve.
+                lastCoordinates = [x3, y3];
+                // Calculate approximate length of segment and divide bezier curve into 2mm long segments.
+                // Takes straight flight path between start and end point even though the curve is not straight.
+                curveLength = pythagoras(x3 - x0, y3 - y0);
+
+                n_segments = Math.ceil(curveLength / 2);
+                //n_segments = 30;
+                //serialLog("n_segments: " + n_segments);
+                
+                // Calculate each point along bezier curve.
+                // http://rosettacode.org/wiki/Cubic_bezier_curves#C
+                for (let k = 0; k < n_segments; k++) {
+                    let t = k / n_segments;
+                    let a = Math.pow((1.0 - t), 3);
+                    let b = 3.0 * t * Math.pow((1.0 - t), 2);
+                    let c = 3.0 * Math.pow(t, 2) * (1.0 - t);
+                    let d = Math.pow(t, 3);
+
+                    let x = a * x0 + b * x1 + c * x2 + d * x3;
+                    let y = a * y0 + b * y1 + c * y2 + d * y3;
+
+                    x = x * stepsPerMM;
+                    y = y * stepsPerMM;
+
+                    //serialLog("" + x + "," + y);
+                    //drawCoords.push([x, y]);
+                    moveHeadTo(x, y);
+
+                    //serialLog("" + x + "," + y);
+                }
             }
             else if (type === "L") {
                 // Handle 'L' type data: ..."L",52.3,86.6,51.3,86.6,...
@@ -932,6 +964,8 @@ namespace tegneRobot {
                 serialLog("L");
                 // Simple move to end point because start point is close to last end point of the former curve segment.
                 moveHeadTo(x1, y1);
+                // Update last coordinates for the next curve.
+                lastCoordinates = [x1, y1];
             }
             else {
                 // Handle unexpected type

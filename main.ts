@@ -1,8 +1,4 @@
+i2crr.setI2CPins(DigitalPin.P1, DigitalPin.P2)
 tegneRobot.startDrawing()
-for (let index = 0; index < 30; index++) {
-    tegneRobot.lowerPen()
-    basic.pause(1000)
-    tegneRobot.liftPen()
-    basic.pause(1000)
-}
-tegneRobot.showOkIcon()
+tegneRobot.svgSdCard(true)
+tegneRobot.endDrawing()
