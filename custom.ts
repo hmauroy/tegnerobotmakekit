@@ -896,14 +896,16 @@ namespace tegneRobot {
             if (line.length === 0) {
                 serialLog("Empty data returned");
                 if (line === "EOF") {
-                    if (lift) {
-                        liftPen();
-                    }
-                    serialLog("Finished SVG drawing from SD-card");
-                    serialLog("current pos: " + machine.currentPosition.x + "," + machine.currentPosition.y);
-                    showOkIcon();
-                    basic.pause(500);
+                    serialLog("EOF");
                 }
+                if (lift) {
+                    liftPen();
+                }
+                serialLog("Finished SVG drawing from SD-card");
+                serialLog("current pos: " + machine.currentPosition.x + "," + machine.currentPosition.y);
+                showOkIcon();
+                isReadingSD = false;
+                basic.pause(500);
                 continue;
             }
 
