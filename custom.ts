@@ -830,7 +830,7 @@ namespace tegneRobot {
                         //drawCoords.push([x, y]);
                         moveHeadTo(x, y);
 
-                        serialLog("" + x + "," + y);
+                        serialLog("svgString moveTo: " + x + "," + y);
                         //drawCoords.push([x * stepsPerMM, y * stepsPerMM]);
                     }
 
@@ -886,7 +886,8 @@ namespace tegneRobot {
         let isReadingSD = true;
         let line = "";
         while (isReadingSD) {
-            line = requestData();           
+            //basic.pause(500); // debugging
+            line = requestData();   
             
             // Run through the line and extract commands and coordinates.
             // Split the data into parts by commas
@@ -901,7 +902,6 @@ namespace tegneRobot {
                     serialLog("Finished SVG drawing from SD-card");
                     serialLog("current pos: " + machine.currentPosition.x + "," + machine.currentPosition.y);
                     showOkIcon();
-                    // TODO: 
                     basic.pause(500);
                 }
                 continue;
@@ -912,12 +912,14 @@ namespace tegneRobot {
 
             if (type === "M") {
                 // Handle 'M' type data
+                serialLog("M ove");
+                serialLog(line);
                 let x = parseFloat(parts[1]);
                 let y = parseFloat(parts[2]);
                 lastCoordinates = [x, y];
                 coordinates = [];
 
-                serialLog("M " + x + "," + y);
+                //serialLog("M " + x + "," + y);
 
                 x = x * stepsPerMM;
                 y = y * stepsPerMM;
@@ -929,48 +931,66 @@ namespace tegneRobot {
             }
             else if (type === "C") {
                 // Cubic bezier
-                let drawCoords: (number | number)[][] = [];
-                coordinates = []; // Initialize empty array to store lastCoordinates.
-                coordinates = coordinates.concat(lastCoordinates);
+                serialLog("C curve");
+                serialLog(line);
+                /*
+                Initiated drawing robot!
+                C,31.6,15.8,31.6,15.8,31.6,15.8,
+                C curve
+                C,31.6,15.9,31.5,15.8,31.5,15.9,
+                C curve
+                NaN,NaN
+                */
 
-                x0 = parseFloat(parts[1]);
-                y0 = parseFloat(parts[2]);
+                x0 = lastCoordinates[0];
+                y0 = lastCoordinates[1];
+                x1 = parseFloat(parts[1]);
+                y1 = parseFloat(parts[2]);
                 x2 = parseFloat(parts[3]);
                 y2 = parseFloat(parts[4]);
                 x3 = parseFloat(parts[5]);
                 y3 = parseFloat(parts[6]);
 
+                // Fetch the last lastCoordinates
+                
                 // Update last coordinates for the next bezier curve.
                 lastCoordinates = [x3, y3];
                 // Calculate approximate length of segment and divide bezier curve into 2mm long segments.
                 // Takes straight flight path between start and end point even though the curve is not straight.
                 curveLength = pythagoras(x3 - x0, y3 - y0);
+                serialLog("Curvelength: " + curveLength);
 
                 n_segments = Math.ceil(curveLength / 2);
                 //n_segments = 30;
-                //serialLog("n_segments: " + n_segments);
-                
-                // Calculate each point along bezier curve.
-                // http://rosettacode.org/wiki/Cubic_bezier_curves#C
-                for (let k = 0; k < n_segments; k++) {
-                    let t = k / n_segments;
-                    let a = Math.pow((1.0 - t), 3);
-                    let b = 3.0 * t * Math.pow((1.0 - t), 2);
-                    let c = 3.0 * Math.pow(t, 2) * (1.0 - t);
-                    let d = Math.pow(t, 3);
-
-                    let x = a * x0 + b * x1 + c * x2 + d * x3;
-                    let y = a * y0 + b * y1 + c * y2 + d * y3;
-
-                    x = x * stepsPerMM;
-                    y = y * stepsPerMM;
-
-                    //serialLog("" + x + "," + y);
-                    //drawCoords.push([x, y]);
-                    moveHeadTo(x, y);
-
-                    //serialLog("" + x + "," + y);
+                serialLog("n_segments: " + n_segments);
+                if (n_segments <= 1) {
+                    serialLog("Small move to:" + x3 + "," + y3);
+                    x3 = x3 * stepsPerMM;
+                    y3 = y3 * stepsPerMM;
+                    moveHeadTo(x3, y3);
                 }
+                else {
+                    // Calculate each point along bezier curve.
+                    // http://rosettacode.org/wiki/Cubic_bezier_curves#C
+                    for (let k = 0; k < n_segments; k++) {
+                        let t = k / n_segments;
+                        let a = Math.pow((1.0 - t), 3);
+                        let b = 3.0 * t * Math.pow((1.0 - t), 2);
+                        let c = 3.0 * Math.pow(t, 2) * (1.0 - t);
+                        let d = Math.pow(t, 3);
+
+                        let x = a * x0 + b * x1 + c * x2 + d * x3;
+                        let y = a * y0 + b * y1 + c * y2 + d * y3;
+
+                        x = x * stepsPerMM;
+                        y = y * stepsPerMM;
+
+                        serialLog("Calculated xy-position" + x + "," + y);
+                        moveHeadTo(x, y);
+                    }
+                }
+                
+                
             }
             else if (type === "L") {
                 // Handle 'L' type data: ..."L",52.3,86.6,51.3,86.6,...
